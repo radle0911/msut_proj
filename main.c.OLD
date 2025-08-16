@@ -1,0 +1,101 @@
+#include "./usart/usart.h"
+#include "./delay/delay.h"
+#include "nRF24L01/nRF24L01.h"
+#include "gpio/gpioc.h"
+#include "spi/spi.h"
+#include <stdint.h>
+
+
+
+
+void runMasterNodeSYS();
+void runSlaveNodeSYS();
+
+int main(void)  
+{
+	uint32_t cnt = 0x00000000;
+	uint8_t node_type = NRF24L01_NODE_TYPE_RX;
+
+	// INICIJALIZACIJA START -------------------------------------------------------------------------
+	initUSART2(USART2_BAUDRATE_921600);
+	initSYSTIMER();
+
+
+
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+	GPIOC->MODER &= ~(GPIO_MODER_MODER6);  
+	GPIOC->PUPDR |= (GPIO_PUPDR_PUPDR6_0);		
+
+	delay_ms(10);
+	if((GPIOC->IDR & 0x00000040) == 0x00000000)
+	{// init as Tx node
+		node_type = (NRF24L01_NODE_TYPE_TX);
+	}
+
+
+
+
+	initGPIOC6_GND();
+	chkConnection_GPIOC6_GND(&node_type); // provjeravamo da li je PC6 pin spojen na GND, ako je onda je
+	// 0 -> RX -> (spojen na GND), 1 -> TX -> (lebdi)
+
+
+	initnRF24L01(node_type);
+
+
+	printUSART2("\n\nwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
+	printUSART2("w         nRF24L01 Tx-Rx-msg demo... node_type = [%d]          w\n",node_type);
+	printUSART2("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
+
+
+	// INICIJALIZACIJA END ---------------------------------------------------------------------------
+
+	if (node_type == NRF24L01_NODE_TYPE_TX) {
+		runMasterNodeSYS(); // ovo ispisuje kao da salje
+	}else {
+		runSlaveNodeSYS();  // bude mi sve prazno nekako
+	}
+
+	return 0;
+}
+
+
+
+void runMasterNodeSYS(void)
+{
+	uint8_t cnt = 0;
+	char nrf_data[NRF24L01_PIPE_LENGTH] = "nRF24L01 Tx 0";
+	uint8_t * p_msg = (uint8_t *)nrf_data;
+	while(1)
+	{
+		//printUSART2("-> SYS: tx-ing msg [%d]\n",cnt);
+		p_msg[12] = 0x30 + cnt;
+
+		txDataNRF24L01((uint8_t *)c_nrf_slave_addr, p_msg);
+		//delay_ms(1000);		
+		cnt++;
+		if(cnt > 9)
+			cnt = 0;
+	}
+}
+
+
+
+void runSlaveNodeSYS(void)
+{
+	uint8_t k = 1; 
+	uint8_t res;
+	uint8_t nrf_data[NRF24L01_PIPE_LENGTH];
+	setTxAddrNRF24L01((uint8_t*)c_nrf_master_addr);   // mozda treba bez (uint8_t*)
+	while(1)
+	{
+		res = dataReadyNRF24L01();
+
+		if(res == (NRF_DATA_READY))
+		{
+			rxDataNRF24L01(nrf_data);
+			printUSART2("%s\n",nrf_data); // zbog ovog ide u novi red stalno
+		}
+	}
+}
+

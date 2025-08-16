@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/eldar/ms_proj/msut_proj",
+    "command": "arm-none-eabi-gcc -I/home/eldar/workspace/msut/STM32F407/Libraries/CMSIS/Include -I/home/eldar/workspace/msut/STM32F407/Libraries/CMSIS/ST/STM32F4xx/Include -DSTM32F407xx -c main.c -o main.o",
+    "file": "main.c"
+  }
+]

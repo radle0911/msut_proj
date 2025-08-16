@@ -49,6 +49,7 @@ void runMasterNodeSYS(){
   while (1) {
     p_msg[12] = 0x30 + cnt;
     txDataNRF24L01((uint8_t*)c_nrf_slave_addr, p_msg);
+	//printUSART2("-> SYS: tx-ing msg [%d]\n",cnt);
     ++cnt;
     if (cnt > 9) {
       cnt = 0;

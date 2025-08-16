@@ -203,7 +203,7 @@ void txPacketNRF24L01(uint8_t * data)
 	uint8_t status, k, tmp;
 	uint32_t timer = getSYSTIMER();
 	
-	printUSART2("Ulazi al je nrf_mode = %d treba 0 \n",nrf_mode);
+	//printUSART2("Ulazi al je nrf_mode = %d treba 0 \n",nrf_mode);
 	while(nrf_mode == NRF_MODE_TX)
 	{
 		status = getRegNRF24L01(NRF24L01_STATUS);
@@ -216,7 +216,7 @@ void txPacketNRF24L01(uint8_t * data)
 		if(chk4TimeoutSYSTIMER(timer, 1000) == (SYSTIMER_TIMEOUT))
 		{
 			printUSART2("TIMEOUT\n");
-			//delay_ms(1000);
+			delay_ms(1000);
 			return;
 		}
 	}
@@ -234,7 +234,7 @@ void txPacketNRF24L01(uint8_t * data)
 	NRF_CE_HIGH;
 	delay_us(130);														// delay >10us
   
-	printUSART2("kraj funkcije nrf_mode = %d treba 1 \n",nrf_mode);	 // ovo izbrisati kasnije   
+	//printUSART2("kraj funkcije nrf_mode = %d treba 1 \n",nrf_mode);	 // ovo izbrisati kasnije   
 	//delay_ms(1000);							 // ovo izbrisati kasnije 
 	
 }
@@ -348,7 +348,7 @@ uint8_t txDataNRF24L01(uint8_t * daddr, uint8_t * data)
 {
 	uint8_t res = (NRF24L01_TX_COMPLETED);
 	uint32_t timer = getSYSTIMER();
-	uint32_t tim;
+	//uint32_t tim;
 
 	setTxAddrNRF24L01(daddr);	
 	txPacketNRF24L01(data);					
@@ -364,8 +364,8 @@ uint8_t txDataNRF24L01(uint8_t * daddr, uint8_t * data)
 	}
 	
 	
-	tim = getSYSTIMER();
-	printUSART2("-> timer = %d\n\n\n",tim-timer);
+	//tim = getSYSTIMER();
+	//printUSART2("-> timer = %d\n\n\n",tim-timer);
 	return res;
 }
 

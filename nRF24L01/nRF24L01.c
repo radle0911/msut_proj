@@ -201,7 +201,7 @@ uint8_t getRegNRF24L01(uint8_t reg)
 void txPacketNRF24L01(uint8_t * data)
 {
 	uint8_t status, k, tmp;
-	uint32_t timer = getSYSTIMER();
+	uint32_t timer = getSYSTIMER_TIM7();
 	
 	//printUSART2("Ulazi al je nrf_mode = %d treba 0 \n",nrf_mode);
 	while(nrf_mode == NRF_MODE_TX)
@@ -213,7 +213,7 @@ void txPacketNRF24L01(uint8_t * data)
 			break;
 		}
 		
-		if(chk4TimeoutSYSTIMER(timer, 1000) == (SYSTIMER_TIMEOUT))
+		if(chk4TimeoutSYSTIMER_TIM7(timer, 1000) == (SYSTIMER_TIMEOUT))
 		{
 			printUSART2("TIMEOUT\n");
 			delay_ms(1000);
@@ -347,7 +347,7 @@ uint8_t	txOverNRF24L01(void)
 uint8_t txDataNRF24L01(uint8_t * daddr, uint8_t * data)
 {
 	uint8_t res = (NRF24L01_TX_COMPLETED);
-	uint32_t timer = getSYSTIMER();
+	uint32_t timer = getSYSTIMER_TIM7();
 	//uint32_t tim;
 
 	setTxAddrNRF24L01(daddr);	
@@ -356,7 +356,7 @@ uint8_t txDataNRF24L01(uint8_t * daddr, uint8_t * data)
 	++global_cnt;
 	while(txOverNRF24L01() == (NRF_TX_IN_PROGRESS))
 	{
-		if(chk4TimeoutSYSTIMER(timer, NRF24L01_TX_WAIT_PERIOD) == (SYSTIMER_TIMEOUT))
+		if(chk4TimeoutSYSTIMER_TIM7(timer, NRF24L01_TX_WAIT_PERIOD) == (SYSTIMER_TIMEOUT))
 		{
 			res = (NRF24L01_TX_FAILED);
 			break;

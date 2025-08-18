@@ -15,7 +15,7 @@ int main(void)
   // INICIJALIZACIJA START -----------------------------------------------
   {
     initUSART2(USART2_BAUDRATE_921600);
-    initSYSTIMER();
+    initSYSTIMER_TIM7();
 
     // TX or RX check
     initGPIOC6_GND();
@@ -61,12 +61,15 @@ void runMasterNodeSYS(){
 void runSlaveNodeSYS(){
   uint8_t res;
   uint8_t nrf_data[NRF24L01_PIPE_LENGTH];
+//  int8_t nrf_data[3];
   setTxAddrNRF24L01((uint8_t*)c_nrf_master_addr);
   while (1) {
     res = dataReadyNRF24L01();
     if (res == NRF_DATA_READY) {
       rxDataNRF24L01(nrf_data);
       printUSART2("%s\n",nrf_data);
+ //     printUSART2("-> |[%d],[%d],[%d]|\n",nrf_data[0],nrf_data[1],nrf_data[2]);
+
     }
   }
 }

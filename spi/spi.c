@@ -174,7 +174,7 @@ void initSPI2_nRF24lO1_carrier(uint16_t prescaler)
     RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
     SPI2->CR1 = SPI_CR1_MSTR;    // master configuration      // ovako je prof. uradio
     //SPI2->CR1 |= SPI_CR1_MSTR;    // master configuration   // chatGPT kaze ovo je bolje
-    SPI2->CR1 |= (SPI_CR1_SSM | SPI_CR1_SSI);
+    SPI2->CR1 |= (SPI_CR1_SSI | SPI_CR1_SSM);
     SPI2->CR1 |= prescaler;       // podesavamo BR[2:0] vrijednosti
 
     SPI2->CR1 |=SPI_CR1_SPE;      // SPI enable
